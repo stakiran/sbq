@@ -45,6 +45,7 @@ def arguments_title(parser):
 def arguments_substr(parser):
     parser.add_argument('--title', default=False, action='store_true')
     parser.add_argument('--lines', default=False, action='store_true')
+    parser.add_argument('keyword_and_pageMethod', nargs=2)
 
 def arguments_root(parser):
     parser.add_argument('-i', '--input', default=None, required=True,
@@ -124,6 +125,15 @@ class PageSeeker:
         if not title in self._page_insts:
             raise RuntimeError('Not found page "{}".'.format(title))
         return self._page_insts[title]
+
+    def find_partially_from_title(self, keyword):
+        found_page_insts = []
+        for title in self._page_insts:
+            if not keyword in title:
+                continue
+            page_inst = self._page_insts[title]
+            found_page_insts.append(page_inst)
+        return found_page_insts
 
 class Page:
     def __init__(self, page_obj, project_name):
@@ -223,11 +233,40 @@ total {lineNumber} lines. '''.format(
 def ________Main________():
     pass
 
+# @todo
+# - subcommand つくるところコピペが多いのでもうちょっと
+#   - Project つくるところ
+#   - do_xxx() を定義して, func_table で対応して...
+
 def do_without_subcommand(args):
     print(args)
 
 def do_substr(args):
-    print(args)
+    keyword, page_method = args.keyword_and_pageMethod
+
+    use_title = args.title
+    use_lines = args.lines
+
+    if not use_title and not use_lines:
+        raise RuntimeError('No valid option. You must give each of "title" or "lines".')
+
+    filename = args.input
+    s = file2str(filename)
+    obj = str2obj(s)
+    proj = Project(obj)
+
+    seeker = PageSeeker(proj)
+
+    if use_title:
+        page_insts = seeker.find_partially_from_title(keyword)
+
+    if len(page_insts) == 0:
+        print('No match with keyword "{}" in {}.'.format(keyword, title))
+        return
+
+    for page_inst in page_insts:
+        returned_value = getattr(page_inst, page_method)
+        print(returned_value)
 
 def do_title(args):
     title, page_method = args.title_and_pageMethod
@@ -240,8 +279,8 @@ def do_title(args):
     seeker = PageSeeker(proj)
     page = seeker.get(title)
 
-    retuned_value = getattr(page, page_method)
-    print(retuned_value)
+    returned_value = getattr(page, page_method)
+    print(returned_value)
 
 if __name__ == '__main__':
     args = parse_arguments()

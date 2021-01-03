@@ -3,7 +3,7 @@ Command-line Scrapbox Exported JSON processor.
 
 ## usage
 
-### property a page with title
+### 指定ページ名に対して何かを取り出す
 With `title` subcommand:
 
 ```
@@ -44,3 +44,26 @@ teeting
  [teetingのコツ]
  [teetingのテンプレート]
 ```
+
+### 「指定文字列を `タイトル | 本文` に含むページ」に対して何かを取り出す
+With `substr` subcommand:
+
+```
+sbq -i (YOUR-JSON).json substr --title "(KEYWORD)" (METHOD-NAME)
+sbq -i (YOUR-JSON).json substr --lines "(KEYWORD)" (METHOD-NAME)
+```
+
+Example:
+
+```
+$ sbq -i sta.json substr --title teeting title
+ランダムアクセスなteeting
+teetingのやり方
+teeting
+シーケンシャルなteeting
+teetingのコツ
+teetingが上手くいかない
+teetingが行えるツール
+teetingのテンプレート
+```
+
