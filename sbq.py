@@ -165,12 +165,17 @@ class Page:
     @property
     def lines(self):
         ''' 以下を実施
+        - 先頭行は title に等しいのでカット
         - 行頭インデントを space に揃える'''
         if len(self._lines_cache) != 0:
             return self._lines_cache
 
         newlines = []
-        for line in self._obj['lines']:
+
+        lines = self._obj['lines']
+        lines = lines[1:]
+
+        for line in lines:
             # 上手い正規表現思いつかなかった...
             # r'^[\t ]+' を「マッチした文字数個の ' '」にreplaceしたいんだが...
             count = count_first_space_or_tab(line)
