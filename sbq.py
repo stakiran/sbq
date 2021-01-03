@@ -60,6 +60,10 @@ class Project:
         return self._obj['exported']
 
     @property
+    def pages(self):
+        return self._obj['pages']
+
+    @property
     def exported_by_datetime(self):
         unixtime = self.exported_by_unixtime
         return create_datetime_from_unixtime(unixtime)
@@ -70,6 +74,58 @@ exported at {exported}'''.format(
             name=self.name,
             displayName=self.display_name,
             exported=self.exported_by_datetime,
+        )
+
+class Page:
+    def __init__(self, page_obj):
+        self._obj = page_obj
+
+    @property
+    def title(self):
+        return self._obj['title']
+
+    @property
+    def id(self):
+        return self._obj['id']
+
+    @property
+    def created_by_unixtime(self):
+        return self._obj['created']
+
+    @property
+    def updated_by_unixtime(self):
+        return self._obj['updated']
+
+    @property
+    def created_by_datetime(self):
+        unixtime = self.created_by_unixtime
+        return create_datetime_from_unixtime(unixtime)
+
+    @property
+    def updated_by_datetime(self):
+        unixtime = self.updated_by_unixtime
+        return create_datetime_from_unixtime(unixtime)
+
+    @property
+    def lines(self):
+        return self._obj['lines']
+
+    def __str__(self):
+        lines = self.lines
+        lineHeads = '\n'.join(lines[:3])
+        line_number = len(lines)
+        return '''{title}
+created at: {created}
+updated at: {updated}
+---
+{lineHeads}...
+
+total {lineNumber} lines. '''.format(
+            title=self.title,
+            created=self.created_by_datetime,
+            updated=self.updated_by_datetime,
+            lineHeads=lineHeads,
+            lineNumber=line_number,
         )
 
 def ________Main________():
@@ -83,4 +139,12 @@ if __name__ == '__main__':
     obj = str2obj(s)
 
     proj = Project(obj)
+    print('=== Project ===')
     print(proj)
+    print('')
+
+    pages = proj.pages
+    page = Page(pages[0])
+    print('=== page[0] ===')
+    print(page)
+    print('')
