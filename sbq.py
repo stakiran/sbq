@@ -36,6 +36,10 @@ def count_first_space_or_tab(s):
         break
     return count
 
+def dir_without_magics(obj):
+    # See: https://www.askpython.com/python/examples/find-all-methods-of-class
+    return [method for method in dir(obj) if not method.startswith('__')]
+
 def ________Argument________():
     pass
 
@@ -50,6 +54,8 @@ def arguments_substr(parser):
 def arguments_root(parser):
     parser.add_argument('-i', '--input', default=None, required=True,
         help='An input .json filename.')
+
+    parser.add_argument('--list-methods', default=False, action='store_true')
 
 def parse_arguments():
     import argparse
@@ -248,9 +254,14 @@ def ________Main________():
 #   - Project つくるところ
 #   - do_xxx() を定義して, func_table で対応して...
 # - エラーが例外そのまま投げてて不親切
+# - 戻り値は do_xxx() から __main__ に返すべきでは
 
 def do_without_subcommand(args):
-    print(args)
+    if args.list_methods:
+        method_list = dir_without_magics(Page)
+        for method in method_list:
+            print(method)
+        return
 
 def do_substr(args):
     keyword, page_method = args.keyword_and_pageMethod
