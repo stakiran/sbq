@@ -26,17 +26,28 @@ def create_datetime_from_unixtime(number):
 def ________Argument________():
     pass
 
-def parse_arguments():
-    import argparse
+def arguments_pagename(parser):
+    parser.add_argument('--substr', default=None, type=str)
+    parser.add_argument('--method', default=None, type=str)
 
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-
+def arguments_root(parser):
     parser.add_argument('-i', '--input', default=None, required=True,
         help='An input .json filename.')
 
-    args = parser.parse_args()
+def parse_arguments():
+    import argparse
+
+    parser_root = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    subparsers = parser_root.add_subparsers()
+
+    parser_pagename = subparsers.add_parser('name')
+
+    arguments_root(parser_root)
+    arguments_pagename(parser_pagename)
+
+    args = parser_root.parse_args()
     return args
 
 def ________Wrapper________():
@@ -133,6 +144,10 @@ def ________Main________():
 
 if __name__ == '__main__':
     args = parse_arguments()
+
+    print('=== args ===')
+    print(args)
+    print('')
 
     filename = args.input
     s = file2str(filename)
