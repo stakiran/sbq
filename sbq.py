@@ -101,8 +101,10 @@ exported at {exported}'''.format(
         )
 
 class Page:
-    def __init__(self, page_obj):
+    def __init__(self, page_obj, project_name):
+        self._project_name = project_name
         self._obj = page_obj
+
         self._lines_cache = []
 
     @property
@@ -156,10 +158,17 @@ class Page:
         return newlines
 
     @property
+    def url(self):
+        ''' encodingなし. ブラウザ側で対応してくれるはず. '''
+        return 'https://scrapbox.io/{}/{}'.format(
+            self._project_name,
+            self.title,
+        )
+
+    @property
     def rawstring(self):
         lines = self.lines
         return '\n'.join(lines)
-
 
     def __str__(self):
         lines = self.lines
@@ -168,6 +177,7 @@ class Page:
         return '''{title}
 created at: {created}
 updated at: {updated}
+url: {url}
 ---
 {lineHeads}...
 
@@ -175,6 +185,7 @@ total {lineNumber} lines. '''.format(
             title=self.title,
             created=self.created_by_datetime,
             updated=self.updated_by_datetime,
+            url=self.url,
             lineHeads=lineHeads,
             lineNumber=line_number,
         )
@@ -199,7 +210,7 @@ if __name__ == '__main__':
     print('')
 
     pages = proj.pages
-    page = Page(pages[0])
+    page = Page(pages[0], proj.name)
     print('=== page[0] ===')
     print(page)
     print('')
