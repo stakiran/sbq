@@ -3,6 +3,7 @@
 import datetime
 import json
 import os
+import re
 import sys
 
 MYFULLPATH = os.path.abspath(sys.argv[0])
@@ -22,6 +23,18 @@ def str2obj(s):
 
 def create_datetime_from_unixtime(number):
     return datetime.datetime.fromtimestamp(number)
+
+def count_first_space_or_tab(s):
+    count = 0
+    for c in s:
+        if c == '\t':
+            count += 1
+            continue
+        if c == ' ':
+            count += 1
+            continue
+        break
+    return count
 
 def ________Argument________():
     pass
@@ -90,6 +103,7 @@ exported at {exported}'''.format(
 class Page:
     def __init__(self, page_obj):
         self._obj = page_obj
+        self._lines_cache = []
 
     @property
     def title(self):
@@ -118,8 +132,34 @@ class Page:
         return create_datetime_from_unixtime(unixtime)
 
     @property
-    def lines(self):
+    def _lines(self):
         return self._obj['lines']
+
+    @property
+    def lines(self):
+        ''' 以下を実施
+        - 行頭インデントを space に揃える'''
+        if len(self._lines_cache) != 0:
+            return self._lines_cache
+
+        newlines = []
+        for line in self._obj['lines']:
+            # 上手い正規表現思いつかなかった...
+            # r'^[\t ]+' を「マッチした文字数個の ' '」にreplaceしたいんだが...
+            count = count_first_space_or_tab(line)
+            newline = '{}{}'.format(
+                ' '*count,
+                line[count:]
+            )
+            newlines.append(newline)
+        self._lines_cache = newlines
+        return newlines
+
+    @property
+    def rawstring(self):
+        lines = self.lines
+        return '\n'.join(lines)
+
 
     def __str__(self):
         lines = self.lines
@@ -163,3 +203,5 @@ if __name__ == '__main__':
     print('=== page[0] ===')
     print(page)
     print('')
+
+    print(page.rawstring)
