@@ -43,6 +43,10 @@ def arguments_pagename(parser):
     parser.add_argument('--substr', default=None, type=str)
     parser.add_argument('--method', default=None, type=str)
 
+def arguments_pagename(parser):
+    parser.add_argument('--substr', default=None, type=str)
+    parser.add_argument('--method', default=None, type=str)
+
 def arguments_root(parser):
     parser.add_argument('-i', '--input', default=None, required=True,
         help='An input .json filename.')
@@ -53,7 +57,9 @@ def parse_arguments():
     parser_root = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    subparsers = parser_root.add_subparsers()
+    subparsers = parser_root.add_subparsers(
+        dest = 'subcommand'
+    )
 
     parser_pagename = subparsers.add_parser('name')
 
@@ -193,9 +199,7 @@ total {lineNumber} lines. '''.format(
 def ________Main________():
     pass
 
-if __name__ == '__main__':
-    args = parse_arguments()
-
+def do_without_subcommand(args):
     print('=== args ===')
     print(args)
     print('')
@@ -216,3 +220,25 @@ if __name__ == '__main__':
     print('')
 
     print(page.rawstring)
+
+def do_name(args):
+    print('subcommand "name"!')
+
+if __name__ == '__main__':
+    args = parse_arguments()
+
+    subcommand = args.subcommand
+ 
+    if not subcommand:
+        do_without_subcommand(args)
+        sys.exit(0)
+ 
+    func_table = {
+        'name' : do_name
+    }
+    if not subcommand in func_table:
+        raise RuntimeError('No subcommand "{}", especially impl miss.'.format(subcommand))
+
+    f = func_table[subcommand]
+    f(args)
+    sys.exit(0)
