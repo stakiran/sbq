@@ -39,13 +39,12 @@ def count_first_space_or_tab(s):
 def ________Argument________():
     pass
 
-def arguments_pagename(parser):
-    parser.add_argument('--substr', default=None, type=str)
-    parser.add_argument('--method', default=None, type=str)
+def arguments_title(parser):
+    parser.add_argument('title_and_pageMethod', nargs=2)
 
-def arguments_pagename(parser):
-    parser.add_argument('--substr', default=None, type=str)
-    parser.add_argument('--method', default=None, type=str)
+def arguments_substr(parser):
+    parser.add_argument('--title', default=False, action='store_true')
+    parser.add_argument('--lines', default=False, action='store_true')
 
 def arguments_root(parser):
     parser.add_argument('-i', '--input', default=None, required=True,
@@ -61,10 +60,10 @@ def parse_arguments():
         dest = 'subcommand'
     )
 
-    parser_pagename = subparsers.add_parser('name')
-
     arguments_root(parser_root)
-    arguments_pagename(parser_pagename)
+
+    arguments_substr(subparsers.add_parser('substr'))
+    arguments_title(subparsers.add_parser('title'))
 
     args = parser_root.parse_args()
     return args
@@ -105,6 +104,26 @@ exported at {exported}'''.format(
             displayName=self.display_name,
             exported=self.exported_by_datetime,
         )
+
+class PageSeeker:
+    def __init__(self, proj):
+        self._proj = proj
+        self._parse()
+
+    def _parse(self):
+        projname = self._proj.name
+        pages = self._proj.pages
+
+        self._page_insts = {}
+        for page in pages:
+            page_inst = Page(page, projname)
+            title = page_inst.title
+            self._page_insts[title] = page_inst
+
+    def get(self, title):
+        if not title in self._page_insts:
+            raise RuntimeError('Not found page "{}".'.format(title))
+        return self._page_insts[title]
 
 class Page:
     def __init__(self, page_obj, project_name):
@@ -200,29 +219,24 @@ def ________Main________():
     pass
 
 def do_without_subcommand(args):
-    print('=== args ===')
     print(args)
-    print('')
+
+def do_substr(args):
+    print(args)
+
+def do_title(args):
+    title, page_method = args.title_and_pageMethod
 
     filename = args.input
     s = file2str(filename)
     obj = str2obj(s)
-
     proj = Project(obj)
-    print('=== Project ===')
-    print(proj)
-    print('')
 
-    pages = proj.pages
-    page = Page(pages[0], proj.name)
-    print('=== page[0] ===')
-    print(page)
-    print('')
+    seeker = PageSeeker(proj)
+    page = seeker.get(title)
 
-    print(page.rawstring)
-
-def do_name(args):
-    print('subcommand "name"!')
+    retuned_value = getattr(page, page_method)
+    print(retuned_value)
 
 if __name__ == '__main__':
     args = parse_arguments()
@@ -234,7 +248,8 @@ if __name__ == '__main__':
         sys.exit(0)
  
     func_table = {
-        'name' : do_name
+        'substr' : do_substr,
+        'title' : do_title,
     }
     if not subcommand in func_table:
         raise RuntimeError('No subcommand "{}", especially impl miss.'.format(subcommand))
