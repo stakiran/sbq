@@ -237,6 +237,7 @@ def ________Main________():
 # - subcommand つくるところコピペが多いのでもうちょっと
 #   - Project つくるところ
 #   - do_xxx() を定義して, func_table で対応して...
+# - エラーが例外そのまま投げてて不親切
 
 def do_without_subcommand(args):
     print(args)
