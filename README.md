@@ -1,7 +1,7 @@
 # sbq
 Command-line Scrapbox Exported JSON processor.
 
-## usage
+## Usage
 
 ### 指定ページ名に対して何かを取り出す
 With `title` subcommand:
@@ -91,4 +91,20 @@ teetingのテンプレート
 同時編集
 箇条書き同時編集
 co-meeting
+```
+
+## Q: `(METHOD-NAME)` がわかりません
+
+```
+$ sbq -i sta.json --list-methods
+_lines
+created_by_datetime
+created_by_unixtime
+id
+lines
+rawstring
+title
+updated_by_datetime
+updated_by_unixtime
+url
 ```
