@@ -135,6 +135,16 @@ class PageSeeker:
             found_page_insts.append(page_inst)
         return found_page_insts
 
+    def find_partially_from_lines(self, keyword):
+        found_page_insts = []
+        for title in self._page_insts:
+            page_inst = self._page_insts[title]
+            lines_by_string = page_inst.rawstring
+            if not keyword in lines_by_string:
+                continue
+            found_page_insts.append(page_inst)
+        return found_page_insts
+
 class Page:
     def __init__(self, page_obj, project_name):
         self._project_name = project_name
@@ -260,9 +270,11 @@ def do_substr(args):
 
     if use_title:
         page_insts = seeker.find_partially_from_title(keyword)
+    elif use_lines:
+        page_insts = seeker.find_partially_from_lines(keyword)
 
     if len(page_insts) == 0:
-        print('No match with keyword "{}" in {}.'.format(keyword, title))
+        print('No match with keyword "{}"..'.format(keyword))
         return
 
     for page_inst in page_insts:

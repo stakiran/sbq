@@ -53,7 +53,7 @@ sbq -i (YOUR-JSON).json substr --title "(KEYWORD)" (METHOD-NAME)
 sbq -i (YOUR-JSON).json substr --lines "(KEYWORD)" (METHOD-NAME)
 ```
 
-Example:
+Example1 within `title`:
 
 ```
 $ sbq -i sta.json substr --title teeting title
@@ -67,3 +67,28 @@ teetingが行えるツール
 teetingのテンプレート
 ```
 
+Example2 within `lines`:
+
+```
+$ sbq -i sta.json substr --lines teeting title
+ランダムアクセスなteeting
+teetingのやり方
+会議拘束のレベル
+ここで知的生産しているもの
+teeting
+シーケンシャルなteeting
+teetingのコツ
+8ヶ月ずっとテレワークしてみて感想
+teetingが上手くいかない
+箇条書き同時編集は難しい
+ターン制コミュニケーションに対する忍耐力が落ちている
+ノンバーバルをカットするという発想を持たない
+タイピングが遅い
+グラフィックファシリテーション
+teetingが行えるツール
+teetingのテンプレート
+マルチトーキング
+同時編集
+箇条書き同時編集
+co-meeting
+```
